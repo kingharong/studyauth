@@ -67,7 +67,7 @@ router.get('board1/:id/addlike',isLoggedIn,isAuthorized, async(req,res,next)=>{
     }
 });
 router.get('board1/:id/dellike',isLoggedIn, isAuthorized, async(req,res,next)=>{
-    try{
+    try {
         const postlike = await Post.findOne({
             attributes: ['like'],
             where: {id: req.params.id},
