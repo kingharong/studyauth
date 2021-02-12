@@ -30,6 +30,23 @@ router.post('board1/addpost', isLoggedIn, isAuthorized, upload2.none(), async (r
 
 } );
 
+router.put('/board1/modify',isLoggedIn,isAuthorized, async (req,res,next)=>{
+
+        try {
+            const postId = req.body.id;
+            await Post.update({
+                content: req.body.content,
+                img: req.body.url,
+            },{
+                where: { id:postId, userId: req.decoded.id }
+            });
+            res.redirect(303,'/board1/'+postId);
+        } catch (err) {
+            console.error(err);
+            next(err);
+        }
+    });
+
 
 router.get('/search',isLoggedIn,isAuthorized, async (req,res,next)=>{
     try{
@@ -62,22 +79,6 @@ router.route('/board1/:id')
             next(err);
         }
     })
-    .put(isLoggedIn, isAuthorized, async (req,res, next)=> {
-        try {
-            const postId = req.params.id;
-            await Post.update({
-                content: req.body.content,
-                img: req.body.url,
-                userId: req.decoded.id,
-            },{
-                where: { id:postId }
-            });
-            res.redirect(303,'/board1/'+postId);
-        } catch (err) {
-            console.error(err);
-            next(err);
-        }
-    })
     .delete(isLoggedIn,isAuthorized, async(req,res,next)=>{
         try {
             await Post.destroy({
@@ -90,6 +91,7 @@ router.route('/board1/:id')
 
         }
     });
+
 
 router.get('board1/:id/addlike',isLoggedIn,isAuthorized, async(req,res,next)=>{
     try {
