@@ -51,9 +51,9 @@ app.use('/auth',authRouter);
 app.use('/emailauth',emailauthRouter);
 
 app.use((req,res,next)=>{
-    const error = new Error(`${req.method},${req.url} 라우터가 없습니다`);
-    error.status(404);
-    next(error);
+    const err = new Error(`${req.method},${req.url} 라우터가 없습니다`);
+    err.status=404;
+    next(err);
 });
 
 app.use((err,req,res,next)=>{
