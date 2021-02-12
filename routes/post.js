@@ -15,7 +15,7 @@ router.post('/img',isLoggedIn, isAuthorized, upload.single('img'),(req,res)=>{
     res.json({url: `/img/${req.file.filename}`});
 });
 const upload2 = multer();
-router.post('/', isLoggedIn, isAuthorized, upload2.none(), async (req,res,next)=>{
+router.post('board1/addpost', isLoggedIn, isAuthorized, upload2.none(), async (req,res,next)=>{
     try {
         const post = Post.create({
             content: req.body.content,
@@ -29,6 +29,7 @@ router.post('/', isLoggedIn, isAuthorized, upload2.none(), async (req,res,next)=
     }
 
 } );
+
 
 router.get('/search',isLoggedIn,isAuthorized, async (req,res,next)=>{
     try{
@@ -48,6 +49,47 @@ router.get('/search',isLoggedIn,isAuthorized, async (req,res,next)=>{
         next(err);
     }
 });
+
+router.route('/board1/:id')
+    .get(isLoggedIn, async (req,res,next)=>{
+        try{
+            const post = await Post.findOne({
+                where: {id:req.params.id}
+            });
+            res.status(200).json({post: post});
+        } catch (err){
+            console.error(err);
+            next(err);
+        }
+    })
+    .put(isLoggedIn, isAuthorized, async (req,res, next)=> {
+        try {
+            const postId = req.params.id;
+            await Post.update({
+                content: req.body.content,
+                img: req.body.url,
+                userId: req.decoded.id,
+            },{
+                where: { id:postId }
+            });
+            res.redirect(303,'/board1/'+postId);
+        } catch (err) {
+            console.error(err);
+            next(err);
+        }
+    })
+    .delete(isLoggedIn,isAuthorized, async(req,res,next)=>{
+        try {
+            await Post.destroy({
+                where: {id: req.params.id, userId: req.decoded.id}
+            });
+            res.status(200).json({message: '삭제 완료'});
+        } catch (err){
+            console.error(err);
+            next(err);
+
+        }
+    });
 
 router.get('board1/:id/addlike',isLoggedIn,isAuthorized, async(req,res,next)=>{
     try {
