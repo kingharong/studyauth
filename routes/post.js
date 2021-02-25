@@ -17,7 +17,7 @@ router.post('/img',isLoggedIn, isAuthorized, upload.single('img'),(req,res)=>{
 const upload2 = multer();
 router.post('board1/addpost', isLoggedIn, isAuthorized, upload2.none(), async (req,res,next)=>{
     try {
-        const post = Post.create({
+        const post = await Post.create({
             content: req.body.content,
             img: req.body.url,
             userId: req.decoded.id,
