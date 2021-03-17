@@ -10,7 +10,6 @@ exports.isLoggedIn = (req,res,next)=>{
                 code: 419,
                 message: '토큰이 만료되었습니다'
             });
-
         }
         return res.status(401).json({
             code: 401,
@@ -22,7 +21,7 @@ exports.isLoggedIn = (req,res,next)=>{
 exports.isAuthorized = (req,res,next)=>{
     try {
         console.log(req.decoded.auth);
-        if(req.decoded.auth === 'user' || 'admin'){
+        if(req.decoded.auth === 'user' || req.decoded.auth === 'admin'){
             next();
         }
         else if(req.decoded.auth === 'before'){
